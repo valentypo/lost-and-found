@@ -12,9 +12,11 @@ class LostItemController extends Controller
      */
     public function index()
     {
-        $items = LostItem::where('user_id', auth()->id())->get();
+        $items = LostItem::latest()->get();  
+
         return view('lost-items.index', compact('items'));
     }
+
 
     /**
      * Show the form for creating a new resource.

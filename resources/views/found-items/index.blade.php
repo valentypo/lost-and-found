@@ -24,9 +24,11 @@
                         <th class="border p-3">Actions</th>
                     </tr>
                 </thead>
+
                 <tbody>
                     @forelse ($items as $item)
                         <tr>
+                            <!-- PHOTO -->
                             <td class="border p-3">
                                 @if($item->photo)
                                     <img src="{{ asset('storage/' . $item->photo) }}"
@@ -41,30 +43,56 @@
                             <td class="border p-3">{{ $item->location }}</td>
                             <td class="border p-3">{{ $item->found_date }}</td>
 
-                            <td class="border p-3">
-                                <a href="{{ route('found-items.edit', $item->id) }}" class="text-blue-600">Edit</a> |
+                            <!-- ACTIONS -->
+                            <td class="border p-3 space-x-2">
 
+                                <!-- Edit -->
+                                <a href="{{ route('found-items.edit', $item->id) }}"
+                                   class="text-blue-600">Edit</a>
+
+                                |
+
+                                <!-- Delete -->
                                 <form action="{{ route('found-items.destroy', $item->id) }}"
                                       method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="text-red-600" onclick="return confirm('Delete this item?')">
+                                    <button class="text-red-600"
+                                            onclick="return confirm('Delete this item?')">
                                         Delete
                                     </button>
                                 </form>
+
+                                |
+
+                                <!-- CLAIM BUTTON -->
+                                <form action="{{ route('claim.store') }}"
+                                      method="POST" class="inline">
+                                    @csrf
+                                    <input type="hidden" name="item_id" value="{{ $item->id }}">
+                                    <input type="hidden" name="owner_id" value="{{ $item->user_id }}">
+                                    <input type="hidden" name="type" value="found">
+                                    <button class="bg-blue-600 text-white px-3 py-1 rounded">
+                                        Request Claim
+                                    </button>
+                                </form>
+
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="text-center py-6 text-gray-500">No found items yet.</td>
+                            <td colspan="5"
+                                class="text-center py-6 text-gray-500">
+                                No found items yet.
+                            </td>
                         </tr>
                     @endforelse
                 </tbody>
-            </table>
 
+            </table>
         </div>
 
-        <!-- FULL SCREEN IMAGE MODAL -->
+        <!-- FULL SCREEN MODAL -->
         <div x-show="open"
              class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4"
              @click.self="open = false">

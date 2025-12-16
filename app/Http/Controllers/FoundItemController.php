@@ -12,9 +12,11 @@ class FoundItemController extends Controller
      */
     public function index()
     {
-        $items = FoundItem::where('user_id', auth()->id())->get();
+        $items = FoundItem::latest()->get();
+
         return view('found-items.index', compact('items'));
     }
+
 
     /**
      * Show the form for creating a new resource.

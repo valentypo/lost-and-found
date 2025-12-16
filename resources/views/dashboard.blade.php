@@ -18,7 +18,7 @@
             </div>
 
             <!-- Quick Links / Stats -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
                 <!-- Lost Items Card -->
                 <div class="bg-white shadow-md rounded-lg p-5 hover:shadow-xl transition">
@@ -32,6 +32,14 @@
                     <h4 class="text-lg font-medium text-gray-700">Found Items</h4>
                     <p class="mt-2 text-gray-500">Check items that have been found and reported.</p>
                     <a href="{{ route('found-items.index') }}" class="mt-4 inline-block text-blue-600 hover:underline">View Found Items →</a>
+                </div>
+
+                <!-- Claims Card (NEW) -->
+                <div class="bg-white shadow-md rounded-lg p-5 hover:shadow-xl transition border border-blue-100">
+                    <h4 class="text-lg font-medium text-gray-700">Claims</h4>
+                    <p class="mt-2 text-gray-500">Request, review, and track item ownership claims.</p>
+                    <a href="{{ route('claims.index') }}"
+                        class="mt-4 inline-block text-blue-600 hover:underline font-semibold">Go to Claims →</a>
                 </div>
 
                 <!-- Optional Additional Card -->
