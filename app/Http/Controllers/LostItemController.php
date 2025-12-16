@@ -10,12 +10,33 @@ class LostItemController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $items = LostItem::where('user_id', auth()->id())->get();
+        $query = LostItem::query();
+
+        // Search by title OR description
+        if ($request->filled('search')) {
+            $query->where(function($q) use ($request) {
+                $q->where('title', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('description', 'LIKE', '%' . $request->search . '%');
+            });
+        }
+
+        // Filter by location
+        if ($request->filled('location')) {
+            $query->where('location', 'LIKE', '%' . $request->location . '%');
+        }
+
+        // Filter by lost date
+        if ($request->filled('lost_date')) {
+            $query->whereDate('lost_date', $request->lost_date);
+        }
+
+        $items = $query->latest()->get();
+
         return view('lost-items.index', compact('items'));
     }
-
+   
     /**
      * Show the form for creating a new resource.
      */
@@ -114,4 +135,7 @@ class LostItemController extends Controller
         return redirect()->route('lost-items.index')
                          ->with('success', 'Lost item deleted successfully!');
     }
+
+
+
 }

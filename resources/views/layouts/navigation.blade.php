@@ -15,12 +15,17 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="'#'">
+                    <x-nav-link :href="route('lost-items.index')" :active="request()->routeIs('lost-items.*')">
                         {{ __('Lost Items') }}
                     </x-nav-link>
 
-                    <x-nav-link :href="'#'">
+                    <x-nav-link :href="route('found-items.index')" :active="request()->routeIs('found-items.*')">
                         {{ __('Found Items') }}
+                    </x-nav-link>
+
+                    <!-- Claims (NEW) -->
+                    <x-nav-link :href="route('claims.index')" :active="request()->routeIs('claims.*')">
+                        {{ __('Claims') }}
                     </x-nav-link>
                 </div>
             </div>
@@ -86,6 +91,11 @@
 
             <x-responsive-nav-link :href="'#'">
                 {{ __('Found Items') }}
+            </x-responsive-nav-link>
+
+            <!-- Claims (NEW) -->
+            <x-responsive-nav-link :href="route('claims.index')" :active="request()->routeIs('claims.*')">
+                {{ __('Claims') }}
             </x-responsive-nav-link>
         </div>
 
