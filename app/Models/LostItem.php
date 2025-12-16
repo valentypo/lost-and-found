@@ -7,28 +7,36 @@ use Illuminate\Database\Eloquent\Model;
 class LostItem extends Model
 {
     protected $fillable = [
-    'user_id', 'title', 'description', 'location', 'lost_date', 'photo'
+        'user_id',
+        'title',
+        'description',
+        'location',
+        'lost_date',
+        'photo',
+        'contact_number',
+        'status'
     ];
 
-    public function store(Request $request)
-    {
-    $data = $request->validate([
-        'title' => 'required',
-        'description' => 'required',
-        'location' => 'required',
-        'lost_date' => 'required|date',
-        'photo' => 'image|nullable|max:2048'
-    ]);
 
-    if ($request->hasFile('photo')) {
-        $data['photo'] = $request->file('photo')->store('lost-items', 'public');
-    }
+    // public function store(Request $request)
+    // {
+    // $data = $request->validate([
+    //     'title' => 'required',
+    //     'description' => 'required',
+    //     'location' => 'required',
+    //     'lost_date' => 'required|date',
+    //     'photo' => 'image|nullable|max:2048'
+    // ]);
 
-    $data['user_id'] = auth()->id();
+    // if ($request->hasFile('photo')) {
+    //     $data['photo'] = $request->file('photo')->store('lost-items', 'public');
+    // }
 
-    LostItem::create($data);
+    // $data['user_id'] = auth()->id();
 
-    return redirect()->route('lost-items.index');
-    }
+    // LostItem::create($data);
+
+    // return redirect()->route('lost-items.index');
+    // }
 
 }

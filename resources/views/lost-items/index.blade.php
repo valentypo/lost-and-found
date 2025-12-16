@@ -86,40 +86,44 @@
                             <td class="border p-3">{{ $item->location }}</td>
                             <td class="border p-3">{{ $item->lost_date }}</td>
 
-                            <td class="border p-3">
+                            <td class="border p-3 space-y-2">
 
-                                <!-- Edit -->
-                                <a href="{{ route('lost-items.edit', $item->id) }}"
-                                   class="text-blue-600">Edit</a> |
+                                {{-- OWNER ACTIONS --}}
+                                @if ($item->user_id === auth()->id())
+                                    <a href="{{ route('lost-items.edit', $item->id) }}"
+                                    class="text-blue-600">Edit</a>
 
-                                <!-- Delete -->
-                                <form action="{{ route('lost-items.destroy', $item->id) }}"
-                                      method="POST"
-                                      class="inline">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button class="text-red-600"
-                                            onclick="return confirm('Delete this item?')">
-                                        Delete
-                                    </button>
-                                </form>
+                                    <form action="{{ route('lost-items.destroy', $item->id) }}"
+                                        method="POST"
+                                        class="inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button class="text-red-600 ml-2"
+                                                onclick="return confirm('Delete this item?')">
+                                            Delete
+                                        </button>
+                                    </form>
+                                @endif
 
-                                <!-- CLAIM REQUEST -->
-                                <form action="{{ route('claim.store') }}"
-                                      method="POST"
-                                      class="inline-block ml-2">
-                                    @csrf
+                                {{-- NON-OWNER CLAIM --}}
+                                @if ($item->user_id !== auth()->id())
+                                    <form action="{{ route('claim.store') }}"
+                                        method="POST"
+                                        class="inline-block">
+                                        @csrf
 
-                                    <input type="hidden" name="item_id" value="{{ $item->id }}">
-                                    <input type="hidden" name="owner_id" value="{{ $item->user_id }}">
-                                    <input type="hidden" name="type" value="lost">
+                                        <input type="hidden" name="item_id" value="{{ $item->id }}">
+                                        <input type="hidden" name="owner_id" value="{{ $item->user_id }}">
+                                        <input type="hidden" name="type" value="lost">
 
-                                    <button class="bg-green-600 text-white px-3 py-1 rounded">
-                                        Request Claim
-                                    </button>
-                                </form>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded">
+                                            Request Claim
+                                        </button>
+                                    </form>
+                                @endif
 
                             </td>
+
                         </tr>
 
                     @empty

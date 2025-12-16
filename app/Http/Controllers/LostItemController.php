@@ -56,6 +56,7 @@ class LostItemController extends Controller
             'location' => 'required',
             'lost_date' => 'required|date',
             'photo' => 'image|nullable|max:2048',
+            'contact_number' => 'required'
         ]);
 
         if ($request->hasFile('photo')) {
@@ -76,8 +77,6 @@ class LostItemController extends Controller
     public function show($id)
     {
         $item = LostItem::findOrFail($id);
-
-        abort_if($item->user_id !== auth()->id(), 403);
 
         return view('lost-items.show', compact('item'));
     }
@@ -135,6 +134,18 @@ class LostItemController extends Controller
         return redirect()->route('lost-items.index')
                          ->with('success', 'Lost item deleted successfully!');
     }
+
+    public function claim($id)
+    {
+        $item = LostItem::findOrFail($id);
+
+        abort_if($item->user_id === auth()->id(), 403);
+
+        $item->update(['status' => 'claimed']);
+
+        return back()->with('success', 'Item claimed. Contact revealed.');
+    }
+
 
 
 

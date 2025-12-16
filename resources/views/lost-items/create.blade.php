@@ -36,6 +36,11 @@
                 <input type="file" name="photo">
             </div>
 
+            <div>
+                <label class="block">WhatsApp Contact Number</label>
+                <input type="text" name="contact_number" placeholder="08xxxxxxxxxx" class="w-full border rounded">
+            </div>
+
             <button class="bg-blue-600 text-white px-4 py-2 rounded">
                 Save
             </button>

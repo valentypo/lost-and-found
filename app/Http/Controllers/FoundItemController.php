@@ -40,6 +40,7 @@ class FoundItemController extends Controller
 
 
 
+
     /**
      * Show the form for creating a new resource.
      */
@@ -59,6 +60,7 @@ class FoundItemController extends Controller
             'location' => 'required',
             'found_date' => 'required|date',
             'photo' => 'image|nullable|max:2048',
+            'contact_number' => 'required'
         ]);
 
         if ($request->hasFile('photo')) {
@@ -138,4 +140,16 @@ class FoundItemController extends Controller
         return redirect()->route('found-items.index')
                          ->with('success', 'Found item deleted successfully!');
     }
+
+    public function claim($id)
+    {
+        $item = FoundItem::findOrFail($id);
+
+        abort_if($item->user_id === auth()->id(), 403);
+
+        $item->update(['status' => 'claimed']);
+
+        return back()->with('success', 'Claim request sent.');
+    }
+
 }

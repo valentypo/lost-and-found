@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Claim;
 use Illuminate\Support\Facades\Auth;
+use App\Models\LostItem;
+use App\Models\FoundItem;
 
 class ClaimController extends Controller
 {
@@ -70,6 +72,16 @@ class ClaimController extends Controller
         if ((int)$request->owner_id === (int)auth()->id()) {
             return back()->with('error', 'You cannot claim your own item.');
         }
+        // Prevent duplicate claims
+    $exists = Claim::where('claimer_id', auth()->id())
+        ->where('item_id', $request->item_id)
+        ->where('type', $request->type)
+        ->whereIn('status', ['pending', 'approved'])
+        ->exists();
+
+    if ($exists) {
+        return back()->with('error', 'You have already requested a claim for this item.');
+    }
 
         Claim::create([
             'claimer_id' => auth()->id(),
@@ -82,6 +94,7 @@ class ClaimController extends Controller
         return redirect()->route('claims.index')
             ->with('success', 'Claim request submitted!');
     }
+
     public function destroy($id)
         {
             $claim = Claim::where('id', $id)
@@ -93,5 +106,66 @@ class ClaimController extends Controller
             return redirect()->route('claims.index')
                 ->with('success', 'Claim request deleted.');
         }
+
+    public function approve(Claim $claim)
+    {
+        // Only the item owner can approve
+        abort_if($claim->owner_id !== auth()->id(), 403);
+
+        // Only pending claims can be approved
+        if ($claim->status !== 'pending') {
+            return back()->with('error', 'This claim is no longer pending.');
+        }
+
+        // Approve this claim
+        $claim->update([
+            'status' => 'approved',
+        ]);
+
+        // OPTIONAL: mark item as claimed
+        if ($claim->type === 'lost') {
+            LostItem::where('id', $claim->item_id)
+                ->update(['status' => 'claimed']);
+        }
+
+        if ($claim->type === 'found') {
+            FoundItem::where('id', $claim->item_id)
+                ->update(['status' => 'claimed']);
+        }
+
+        return back()->with('success', 'Claim approved. Contact is now visible.');
+    }
+
+    public function reject(Claim $claim)
+    {
+        // Only the item owner can reject
+        abort_if($claim->owner_id !== auth()->id(), 403);
+
+        // Only pending claims can be rejected
+        if ($claim->status !== 'pending') {
+            return back()->with('error', 'This claim is no longer pending.');
+        }
+
+        $claim->update([
+            'status' => 'rejected',
+        ]);
+
+        return back()->with('success', 'Claim rejected.');
+    }
+
+    public function finish(Claim $claim)
+    {
+        abort_if($claim->owner_id !== auth()->id(), 403);
+
+        if ($claim->status !== 'approved') {
+            return back()->with('error', 'Only approved claims can be finished.');
+        }
+
+        $claim->update([
+            'status' => 'finished',
+        ]);
+
+        return back()->with('success', 'Claim process marked as finished.');
+    }
 
 }

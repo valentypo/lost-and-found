@@ -22,6 +22,9 @@
 
             <label class="font-semibold">Photo</label>
             <input type="file" name="photo" class="mb-4">
+            <br>
+            <label class="font-semibold">WhatsApp Contact Number</label>
+            <input type="text" name="contact_number" placeholder="08xxxxxxxxxx" class="w-full border p-2 rounded mb-4">
 
             <button class="bg-green-600 text-white px-4 py-2 rounded">
                 Save

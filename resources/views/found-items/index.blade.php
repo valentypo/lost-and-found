@@ -87,25 +87,31 @@
                             <td class="border p-3">{{ $item->location }}</td>
                             <td class="border p-3">{{ $item->found_date }}</td>
 
-                            <!-- actions -->
-                            <td class="border p-3">
+                            <td class="border p-3 space-y-2">
 
-                                <a href="{{ route('found-items.edit', $item->id) }}" class="text-blue-600">Edit</a> |
+                            {{-- owner actions --}}
+                            @if ($item->user_id === auth()->id())
+                                <a href="{{ route('found-items.edit', $item->id) }}" class="text-blue-600">Edit</a>
 
                                 <form action="{{ route('found-items.destroy', $item->id) }}"
-                                    method="POST"
-                                    class="inline">
+                                    method="POST" class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="text-red-600"
-                                        onclick="return confirm('Delete this item?')">
+                                    <button class="text-red-600 ml-2"
+                                            onclick="return confirm('Delete this item?')">
                                         Delete
                                     </button>
                                 </form>
 
-                                <!-- CLAIM REQUEST -->
-                                <form action="{{ route('claim.store') }}" method="POST" class="inline-block ml-2">
+                            @endif
+
+                            {{-- non-owner claim --}}
+                            @if ($item->user_id !== auth()->id())
+                                <form action="{{ route('claim.store') }}"
+                                    method="POST"
+                                    class="inline-block">
                                     @csrf
+
                                     <input type="hidden" name="item_id" value="{{ $item->id }}">
                                     <input type="hidden" name="owner_id" value="{{ $item->user_id }}">
                                     <input type="hidden" name="type" value="found">
@@ -114,8 +120,10 @@
                                         Request Claim
                                     </button>
                                 </form>
+                            @endif
 
-                            </td>
+                        </td>
+
                         </tr>
                     @empty
                         <tr>

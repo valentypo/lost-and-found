@@ -45,7 +45,19 @@
 
                                 <td class="p-3">
                                     {{ $claim->created_at->format('Y-m-d') }}
+
+                                    @if ($claim->status === 'approved' && optional($claim->item)->contact_number)
+                                        <div class="mt-2">
+                                            <a href="https://wa.me/{{ preg_replace('/[^0-9]/', '', $claim->item->contact_number) }}"
+                                            target="_blank"
+                                            class="inline-block bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
+                                                Contact Owner (WhatsApp)
+                                            </a>
+                                        </div>
+                                    @endif
                                 </td>
+
+
                                 <td>
                                     <form action="{{ route('claims.destroy', $claim->id) }}" method="POST" onsubmit="return confirm('Delete this claim request?');">
                                         @csrf
@@ -64,7 +76,7 @@
                     </tbody>
                 </table>
 
-                {{-- ✅ Pagination for "My Claims" --}}
+                {{-- Pagination for "My Claims" --}}
                 @if ($myClaims instanceof \Illuminate\Pagination\LengthAwarePaginator && $myClaims->hasPages())
                     <div class="mt-6">
                         {{ $myClaims->appends(request()->query())->links() }}
@@ -108,8 +120,45 @@
                                 </td>
 
                                 <td class="p-3">
-                                    {{ $claim->created_at->format('Y-m-d') }}
-                                </td>
+                                {{ $claim->created_at->format('Y-m-d') }}
+
+                                {{-- OWNER ACTIONS --}}
+                                <div class="mt-2 space-x-2">
+
+                                    @if ($claim->status === 'pending')
+                                        <form action="{{ route('claim.approve', $claim->id) }}"
+                                            method="POST"
+                                            class="inline">
+                                            @csrf
+                                            <button class="bg-blue-600 text-white px-3 py-1 rounded text-sm hover:bg-blue-700">
+                                                Accept
+                                            </button>
+                                        </form>
+
+                                        <form action="{{ route('claim.reject', $claim->id) }}"
+                                            method="POST"
+                                            class="inline">
+                                            @csrf
+                                            <button class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700">
+                                                Reject
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                    @if ($claim->status === 'approved')
+                                        <form action="{{ route('claim.finish', $claim->id) }}"
+                                            method="POST"
+                                            class="inline">
+                                            @csrf
+                                            <button class="bg-green-600 text-white px-3 py-1 rounded text-sm hover:bg-green-700">
+                                                Finish Process
+                                            </button>
+                                        </form>
+                                    @endif
+
+                                </div>
+                            </td>
+
                             </tr>
                         @empty
                             <tr>
