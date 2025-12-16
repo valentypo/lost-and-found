@@ -3,9 +3,6 @@
         <h2 class="text-2xl font-semibold leading-tight">
             {{ __('Profile Settings') }}
         </h2>
-        <p class="text-sm text-gray-500 mt-1">
-            Manage your account information and security
-        </p>
     </x-slot>
 
     <div class="py-10 bg-blue-50">
