@@ -24,14 +24,14 @@
                 <div class="bg-white shadow-md rounded-lg p-5 hover:shadow-xl transition">
                     <h4 class="text-lg font-medium text-gray-700">Lost Items</h4>
                     <p class="mt-2 text-gray-500">Manage and track lost items reported by users.</p>
-                    <a href="#" class="mt-4 inline-block text-blue-600 hover:underline">View Lost Items →</a>
+                    <a href="{{ route('lost-items.index') }}" class="mt-4 inline-block text-blue-600 hover:underline">View Lost Items →</a>
                 </div>
 
                 <!-- Found Items Card -->
                 <div class="bg-white shadow-md rounded-lg p-5 hover:shadow-xl transition">
                     <h4 class="text-lg font-medium text-gray-700">Found Items</h4>
                     <p class="mt-2 text-gray-500">Check items that have been found and reported.</p>
-                    <a href="#" class="mt-4 inline-block text-blue-600 hover:underline">View Found Items →</a>
+                    <a href="{{ route('found-items.index') }}" class="mt-4 inline-block text-blue-600 hover:underline">View Found Items →</a>
                 </div>
 
                 <!-- Optional Additional Card -->
