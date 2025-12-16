@@ -14,24 +14,23 @@ class ClaimController extends Controller
     {
         $userId = auth()->id();
 
-        // 1) Claims yang kamu buat (claimer)
+        // Claims for claimer
         $myClaims = Claim::with(['lostItem', 'foundItem'])
             ->where('claimer_id', $userId)
             ->latest()
-            ->paginate(5, ['*'], 'my_page'); // ✅ page param khusus
+            ->paginate(5, ['*'], 'my_page'); 
 
-        // 2) Claims yang masuk ke item kamu (owner)
+        // Claims for item owner
         $claimsOnMyItems = Claim::with(['lostItem', 'foundItem'])
             ->where('owner_id', $userId)
             ->latest()
-            ->paginate(5, ['*'], 'owner_page'); // ✅ page param khusus
+            ->paginate(5, ['*'], 'owner_page'); 
 
         return view('claims.index', compact('myClaims', 'claimsOnMyItems'));
     }
 
     public function pending()
     {
-        // Pending claim untuk item milik kamu
         $claims = Claim::with(['lostItem', 'foundItem'])
             ->where('status', 'pending')
             ->where('owner_id', auth()->id())
@@ -43,7 +42,6 @@ class ClaimController extends Controller
 
     public function requests()
     {
-        // Semua claim untuk item milik kamu (atau bisa khusus pending kalau mau)
         $claims = Claim::with(['lostItem', 'foundItem'])
             ->where('owner_id', Auth::id())
             ->latest()
@@ -54,7 +52,6 @@ class ClaimController extends Controller
 
     public function show($id)
     {
-        // Konsisten pakai lostItem/foundItem (bukan 'item')
         $claim = Claim::with(['lostItem', 'foundItem'])->findOrFail($id);
 
         return view('claims.show', compact('claim'));
@@ -122,7 +119,6 @@ class ClaimController extends Controller
             'status' => 'approved',
         ]);
 
-        // OPTIONAL: mark item as claimed
         if ($claim->type === 'lost') {
             LostItem::where('id', $claim->item_id)
                 ->update(['status' => 'claimed']);
@@ -155,17 +151,29 @@ class ClaimController extends Controller
 
     public function finish(Claim $claim)
     {
+        // Only the item owner can finish
         abort_if($claim->owner_id !== auth()->id(), 403);
 
+        // Only approved claims can be finished
         if ($claim->status !== 'approved') {
             return back()->with('error', 'Only approved claims can be finished.');
         }
 
-        $claim->update([
-            'status' => 'finished',
-        ]);
+        // Delete the related item
+        if ($claim->type === 'lost' && $claim->lostItem) {
+            $claim->lostItem->delete();
+        }
 
-        return back()->with('success', 'Claim process marked as finished.');
+        if ($claim->type === 'found' && $claim->foundItem) {
+            $claim->foundItem->delete();
+        }
+
+        // Delete the claim itself
+        $claim->delete();
+
+        return redirect()->route('claims.index')
+            ->with('success', 'Claim finished. Item and claim have been removed.');
     }
+
 
 }

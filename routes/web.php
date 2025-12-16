@@ -25,7 +25,6 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     // Lost & Found CRUD
-
     Route::resource('/lost-items', LostItemController::class);
 
     Route::resource('/found-items', FoundItemController::class);

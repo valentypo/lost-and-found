@@ -106,20 +106,31 @@
                             @endif
 
                             {{-- non-owner claim --}}
+                            @php
+                                $alreadyClaimed = \App\Models\Claim::where('claimer_id', auth()->id())
+                                    ->where('item_id', $item->id)
+                                    ->where('type', 'found')
+                                    ->whereIn('status', ['pending', 'approved'])
+                                    ->exists();
+                            @endphp
+
                             @if ($item->user_id !== auth()->id())
-                                <form action="{{ route('claim.store') }}"
-                                    method="POST"
-                                    class="inline-block">
-                                    @csrf
+                                @if ($alreadyClaimed)
+                                    <span class="text-gray-500 text-sm italic">
+                                        Claim already requested
+                                    </span>
+                                @else
+                                    <form action="{{ route('claim.store') }}" method="POST" class="inline-block">
+                                        @csrf
+                                        <input type="hidden" name="item_id" value="{{ $item->id }}">
+                                        <input type="hidden" name="owner_id" value="{{ $item->user_id }}">
+                                        <input type="hidden" name="type" value="found">
 
-                                    <input type="hidden" name="item_id" value="{{ $item->id }}">
-                                    <input type="hidden" name="owner_id" value="{{ $item->user_id }}">
-                                    <input type="hidden" name="type" value="found">
-
-                                    <button class="bg-green-600 text-white px-3 py-1 rounded">
-                                        Request Claim
-                                    </button>
-                                </form>
+                                        <button class="bg-green-600 text-white px-3 py-1 rounded">
+                                            Request Claim
+                                        </button>
+                                    </form>
+                                @endif
                             @endif
 
                         </td>
@@ -137,7 +148,7 @@
 
         </div>
 
-        <!-- ---------------- IMAGE MODAL ---------------- -->
+        <!-- IMAGE MODAL  -->
         <div x-show="open"
             class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4"
             @click.self="open = false">

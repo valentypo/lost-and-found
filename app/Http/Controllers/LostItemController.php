@@ -108,6 +108,7 @@ class LostItemController extends Controller
             'location' => 'required',
             'lost_date' => 'required|date',
             'photo' => 'image|nullable|max:2048',
+            'contact_number' => 'required',
         ]);
 
         if ($request->hasFile('photo')) {
@@ -143,10 +144,8 @@ class LostItemController extends Controller
 
         $item->update(['status' => 'claimed']);
 
-        return back()->with('success', 'Item claimed. Contact revealed.');
+        return back()->with('success', 'Claim request sent.');
     }
-
-
 
 
 }

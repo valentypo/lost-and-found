@@ -38,9 +38,6 @@ class FoundItemController extends Controller
         return view('found-items.index', compact('items'));
     }
 
-
-
-
     /**
      * Show the form for creating a new resource.
      */
@@ -114,6 +111,7 @@ class FoundItemController extends Controller
             'location' => 'required',
             'found_date' => 'required|date',
             'photo' => 'image|nullable|max:2048',
+            'contact_number' => 'required',
         ]);
 
         if ($request->hasFile('photo')) {
