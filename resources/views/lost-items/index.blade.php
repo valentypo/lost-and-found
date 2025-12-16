@@ -9,11 +9,55 @@
 
         <div class="max-w-6xl mx-auto bg-white p-6 shadow rounded-lg">
 
+            <!-- ADD ITEM BUTTON -->
             <a href="{{ route('lost-items.create') }}"
                class="bg-blue-600 text-white px-4 py-2 rounded mb-4 inline-block">
                 + Add Lost Item
             </a>
 
+            <!-- FILTER BAR -->
+            <form method="GET" action="{{ route('lost-items.index') }}"
+                class="mb-6 bg-gray-100 p-4 rounded-lg shadow flex flex-col md:flex-row md:items-end gap-4">
+
+                <!-- Search -->
+                <div class="flex-1">
+                    <label class="block text-sm font-semibold mb-1">Search</label>
+                    <input type="text" name="search" value="{{ request('search') }}"
+                        placeholder="Search by item name or description"
+                        class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400">
+                </div>
+
+                <!-- Location -->
+                <div class="flex-1">
+                    <label class="block text-sm font-semibold mb-1">Location</label>
+                    <input type="text" name="location" value="{{ request('location') }}"
+                        placeholder="Filter by location"
+                        class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400">
+                </div>
+
+                <!-- Lost Date -->
+                <div class="flex-1">
+                    <label class="block text-sm font-semibold mb-1">Lost Date</label>
+                    <input type="date" name="lost_date" value="{{ request('lost_date') }}"
+                        class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-400">
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-2">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
+                        Apply Filter
+                    </button>
+
+                    <a href="{{ route('lost-items.index') }}"
+                    class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 transition">
+                        Reset
+                    </a>
+                </div>
+
+            </form>
+
+
+            <!-- ITEMS TABLE -->
             <table class="w-full mt-4 border-collapse">
                 <thead>
                     <tr class="bg-gray-100 text-left">
@@ -43,21 +87,29 @@
                             <td class="border p-3">{{ $item->lost_date }}</td>
 
                             <td class="border p-3">
-                                <a href="{{ route('lost-items.edit', $item->id) }}" class="text-blue-600">Edit</a> |
 
+                                <!-- Edit -->
+                                <a href="{{ route('lost-items.edit', $item->id) }}"
+                                   class="text-blue-600">Edit</a> |
+
+                                <!-- Delete -->
                                 <form action="{{ route('lost-items.destroy', $item->id) }}"
                                       method="POST"
                                       class="inline">
                                     @csrf
                                     @method('DELETE')
-                                    <button class="text-red-600" onclick="return confirm('Delete this item?')">
+                                    <button class="text-red-600"
+                                            onclick="return confirm('Delete this item?')">
                                         Delete
                                     </button>
                                 </form>
 
-                                {{-- CLAIM REQUEST --}}
-                                <form action="{{ route('claim.store') }}" method="POST" class="inline-block ml-2">
+                                <!-- CLAIM REQUEST -->
+                                <form action="{{ route('claim.store') }}"
+                                      method="POST"
+                                      class="inline-block ml-2">
                                     @csrf
+
                                     <input type="hidden" name="item_id" value="{{ $item->id }}">
                                     <input type="hidden" name="owner_id" value="{{ $item->user_id }}">
                                     <input type="hidden" name="type" value="lost">
@@ -69,10 +121,11 @@
 
                             </td>
                         </tr>
+
                     @empty
                         <tr>
                             <td colspan="5" class="text-center py-6 text-gray-500">
-                                No lost items yet.
+                                No lost items found.
                             </td>
                         </tr>
                     @endforelse
@@ -81,7 +134,7 @@
 
         </div>
 
-        {{-- FULLSCREEN MODAL --}}
+        <!-- FULLSCREEN IMAGE MODAL -->
         <div x-show="open"
              class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4"
              @click.self="open = false">

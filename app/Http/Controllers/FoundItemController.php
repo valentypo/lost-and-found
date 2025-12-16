@@ -10,12 +10,34 @@ class FoundItemController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $items = FoundItem::latest()->get();
+        $query = FoundItem::query();
+
+        // Search (title + description)
+        if ($request->filled('search')) {
+            $query->where(function ($q) use ($request) {
+                $q->where('title', 'like', '%' . $request->search . '%')
+                ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Location filter
+        if ($request->filled('location')) {
+            $query->where('location', 'like', '%' . $request->location . '%');
+        }
+
+        // Found date filter
+        if ($request->filled('found_date')) {
+            $query->whereDate('found_date', $request->found_date);
+        }
+
+        // Final result
+        $items = $query->latest()->get();
 
         return view('found-items.index', compact('items'));
     }
+
 
 
     /**
