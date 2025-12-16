@@ -58,12 +58,24 @@
                     </a>
                 </div>
 
-                <!-- Claims Card (NEW) -->
-                <div class="bg-white shadow-md rounded-lg p-5 hover:shadow-xl transition border border-blue-100">
-                    <h4 class="text-lg font-medium text-gray-700">Claims</h4>
-                    <p class="mt-2 text-gray-500">Request, review, and track item ownership claims.</p>
+                <!-- Claims Card -->
+                <div class="bg-white shadow-sm rounded-xl p-6 border border-blue-100 hover:shadow-md hover:border-blue-300 transition-all duration-300">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="bg-blue-100 rounded-lg p-3">
+                            <svg class="w-8 h-8 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <h4 class="text-xl font-semibold text-gray-800 mb-2">Claims</h4>
+                    <p class="text-gray-600 mb-4 text-sm">Request, review, and track item ownership claims.</p>
                     <a href="{{ route('claims.index') }}"
-                        class="mt-4 inline-block text-blue-600 hover:underline font-semibold">Go to Claims →</a>
+                        class="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium transition-colors">
+                        Go to Claims 
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                        </svg>
+                    </a>
                 </div>
 
                 <!-- Profile Card -->
